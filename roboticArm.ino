@@ -27,7 +27,7 @@ int current = 0; //组计数器
 // Trajectory array {0, 0}开头，此为启动项 (这里只示例了几行，自己补全）
 const int trajectory[][2] = 
 {
-  {0, 0}, {1, -17}, {2, -18}, {3, -18}, {4, -17}, {3, -16}, {6, -10}, {6, -10}, {6, -9},
+  {0, 0}, {10, -17}, {2, -18}, {3, -18}, {4, -17}, {3, -16}, {6, -10}, {6, -10}, {6, -9},
   {5, -5}, {4, -3}, {3, -2}, {2, -1}, {1, 0}, {0, 1}, {-1, 2}, {-3, 3}, {-4, 4},
   {-6, 4}, {-5, 3}, {-7, 3}, {-9, 2}, {-11, 2}, {-12, 2}, {-14, 2}, {-13, 2}, {-15, 2},
   {-17, 2}, {-18, 2}, {-20, 2}, {-22, 2}, {-21, 2}, {-23, 3}, {-22, 3}, {57, 2}, {55, 2},
@@ -83,7 +83,7 @@ void setup()
   pinMode(MSPin_2, OUTPUT);
   pinMode(MSPin_3, OUTPUT);
   digitalWrite(MSPin_1, LOW);
-  digitalWrite(MSPin_2, LOW); // 1/4步模式
+  digitalWrite(MSPin_2, HIGH); // 1/4步模式
   digitalWrite(MSPin_3, LOW);
 
   // Setup button pins
@@ -185,14 +185,28 @@ void RUNNING()
     digitalWrite(motorDirPin_2, direction2);
     
     //循环执行每一步
-    for (int i = 0; i < abs(motor1Steps); i++)
-    {
-      runMotor(motorStepPin_1, motorDirPin_1);
+    // for (int i = 0; i < abs(motor1Steps); i++)
+    // {
+    //   runMotor(motorStepPin_1, motorDirPin_1);
+    // }
+    // for (int j = 0; j < abs(motor2Steps); j++)
+    // {
+    //   runMotor(motorStepPin_2, motorDirPin_2);
+    // }
+    
+    //循环同步执行每一步
+    int maxSteps = max(abs(motor1Steps), abs(motor2Steps));
+
+    for (int i = 0; i < maxSteps; i++) {
+      if (i < abs(motor1Steps)) {
+        runMotor(motorStepPin_1, motorDirPin_1);
+      }
+
+      if (i < abs(motor2Steps)) {
+        runMotor(motorStepPin_2, motorDirPin_2);
+      }
     }
-    for (int j = 0; j < abs(motor2Steps); j++)
-    {
-      runMotor(motorStepPin_2, motorDirPin_2);
-    }
+
     //下一组
     current++;
 }
